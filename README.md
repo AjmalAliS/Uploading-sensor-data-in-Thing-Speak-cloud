@@ -71,12 +71,73 @@ Automatically act on your data and communicate using third-party services like T
 
 
 # PROGRAM:
+DEVELOPED BY:S.Ajmal Ali, REGISTER NUMBER:24009653
+```
+#include"ThingSpeak.h"
+#include <WiFi.h>
+#include "DHT.h"
 
+char ssid[]="Sona's A35";
+char pass[]="Sona@1011";
+
+const int t=25;
+WiFiClient client;
+DHT dht(25, DHT11);
+
+unsigned long myChannelField = 2759181;
+const int ChannelField1 = 1 ;
+const int ChannelField2 = 2 ;
+const char *myWriteAPIKey="E9U6UMA0U1WYL76I";
+
+void setup()
+{
+  Serial.begin(115200);
+  pinMode (t,OUTPUT);
+  WiFi.mode(WIFI_STA);
+  ThingSpeak.begin(client);
+  dht.begin();
+  delay(1000);
+}
+void loop()
+{
+  if(WiFi.status()!=WL_CONNECTED)
+  {
+    Serial.print("Attempting to connet to SSID: ");
+    Serial.println(ssid);
+    while(WiFi.status() != WL_CONNECTED)
+    {
+      WiFi.begin(ssid, pass);
+      Serial.print(".");
+      delay(5000);
+    }
+    Serial.println("\nConnected");
+  }
+  float temperature = dht.readTemperature();
+  float humidity = dht.readHumidity();
+  delay(1000);
+  Serial.print("Temperature: ");
+  Serial.print(temperature);
+  Serial.println(" *C");
+  ThingSpeak.writeField(myChannelField, ChannelField1, temperature,
+myWriteAPIKey);
+  Serial.print("Humidity: ");
+  Serial.print(humidity);
+  Serial.println(" g.m-3");
+  ThingSpeak.writeField(myChannelField, ChannelField2, humidity,
+myWriteAPIKey);
+  delay(1000);
+}
+```
 # CIRCUIT DIAGRAM:
+
+![Screenshot (36)](https://github.com/user-attachments/assets/3068eb4b-9d33-474b-ae5d-ea458b7ce803)
+
 
 # OUTPUT:
 
-# RESULT:
+![image](https://github.com/user-attachments/assets/0c3e0626-e6e1-45ed-a154-b6673ad48764)
 
+
+# RESULT:
 Thus the temperature sensor values are updated in the Thing speak using ESP32 controller.
 
